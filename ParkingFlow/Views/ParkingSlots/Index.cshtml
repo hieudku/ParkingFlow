@@ -1,0 +1,44 @@
+﻿@model List<ParkingSlots>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h1 class="mt-4">Admin ParkingSlots Dashboard</h1>
+            <p>Manage your parking slots here.</p>
+            <hr />
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="ParkingSlots" asp-action="Create" class="btn btn-primary">Create New ParkingSlots</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ParkingSlots ID</th>
+            <th>ParkingSlots Name</th>
+            <th>Description</th>
+            <th>Available</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var obj in Model)
+        {
+            <tr>
+                <td>@obj.Id</td>
+                <td>@obj.SlotCode</td>
+                <td>@obj.Location</td>
+                <td>@obj.IsVacant</td>
+                <td>
+                    <a asp-controller="ParkingSlots" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-warning">Edit</a>
+                    <a asp-controller="ParkingSlots" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
