@@ -19,6 +19,20 @@ namespace ParkingFlow.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // Seed sample data for Bookings
+            modelBuilder.Entity<Bookings>().HasData(
+                new Bookings
+                {
+                    Id = 1,
+                    UserId = "test-user",
+                    ParkingSlotId = 1,
+                    BookingDate = new DateTime(2025, 4, 7),
+                    StartTime = new TimeSpan(9, 0, 0),
+                    EndTime = new TimeSpan(10, 0, 0)
+                }
+                );
+
+            // Seed data for ParkingSlots
             modelBuilder.Entity<ParkingSlots>().HasData(
                 // Kensington Ave
                 new ParkingSlots { Id = 1, SlotCode = "K1", Location = "Kensington Avenue", IsVacant = true },

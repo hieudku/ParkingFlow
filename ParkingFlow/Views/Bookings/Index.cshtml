@@ -1,0 +1,48 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<Bookings>
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h1 class="mt-4">My Bookings Dashboard</h1>
+            <p>Manage your booked parkings here.</p>
+            <hr />
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Bookings" asp-action="Create" class="btn btn-primary">Create New Booking</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Booking ID</th>
+            <th>User</th>
+            <th>Parking Slot ID</th>
+            <th>Date</th>
+            <th>Time Start</th>
+            <th>Time End</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var obj in Model)
+        {
+            <tr>
+                <td>@obj.Id</td>
+                <td>@obj.UserId</td>
+                <td>@obj.ParkingSlotId</td>
+                <td>@obj.BookingDate</td>
+                <td>@obj.StartTime</td>
+                <td>@obj.EndTime</td>
+                <td>
+                    <a asp-controller="ParkingSlots" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-warning">Edit</a>
+                    <a asp-controller="ParkingSlots" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
