@@ -16,5 +16,22 @@ namespace ParkingFlow.Controllers
             List<ParkingSlots> parkingSlots = _db.ParkingSlots.ToList();
             return View(parkingSlots);
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(ParkingSlots parkingSlot)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.ParkingSlots.Add(parkingSlot);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(parkingSlot);
+        }
     }
 }
