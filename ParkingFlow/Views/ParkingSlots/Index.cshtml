@@ -132,8 +132,11 @@
                             <span class="status-badge @badgeClass d-block">@statusText</span>
                         </div>
                         <div class="card-actions">
-                            <a asp-controller="ParkingSlots" asp-action="Edit" asp-route-id="@slot.Id" class="btn btn-sm btn-outline-warning">✏️ Edit</a>
-                            <a asp-controller="ParkingSlots" asp-action="Delete" asp-route-id="@slot.Id" class="btn btn-sm btn-outline-danger">🗑️ Delete</a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-controller="ParkingSlots" asp-action="Edit" asp-route-id="@slot.Id" class="btn btn-sm btn-outline-warning">✏️ Edit</a>
+                                <a asp-controller="ParkingSlots" asp-action="Delete" asp-route-id="@slot.Id" class="btn btn-sm btn-outline-danger">🗑️ Delete</a>
+                            }
                         </div>
                     </div>
                 }
