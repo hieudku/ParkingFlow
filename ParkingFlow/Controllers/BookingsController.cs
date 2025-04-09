@@ -7,21 +7,29 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ParkingFlow.Data;
 using ParkingFlow.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ParkingFlow.Controllers
 {
     public class BookingsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ILogger<BookingsController> _logger;
 
-        public BookingsController(ApplicationDbContext context)
+        public BookingsController(ApplicationDbContext context, UserManager<IdentityUser> userManager, ILogger<BookingsController> logger)
         {
             _context = context;
+            _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: Bookings
         public async Task<IActionResult> Index()
         {
+            _logger.LogInformation("Current user ID is: {UserId}", _userManager.GetUserId(User));
+
             var applicationDbContext = _context.Bookings.Include(b => b.ParkingSlot);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -57,8 +65,13 @@ namespace ParkingFlow.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,ParkingSlotId,BookingDate,StartTime,EndTime")] Bookings bookings)
+        public async Task<IActionResult> Create([Bind("Id,ParkingSlotId,BookingDate,StartTime,EndTime")] Bookings bookings)
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                bookings.UserId = _userManager.GetUserId(User)!; // Set the UserId to the logged-in user's ID
+            }
+            ModelState.Remove(nameof(bookings.UserId));
             if (ModelState.IsValid)
             {
                 _context.Add(bookings);

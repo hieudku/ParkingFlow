@@ -27,7 +27,7 @@ namespace ParkingFlow.Data
                 .HasForeignKey(b => b.ParkingSlotId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Seed sample data for Bookings
+            /* Seed sample data for Bookings
             modelBuilder.Entity<Bookings>().HasData(
                 new Bookings
                 {
@@ -38,7 +38,7 @@ namespace ParkingFlow.Data
                     StartTime = new TimeSpan(9, 0, 0),
                     EndTime = new TimeSpan(10, 0, 0)
                 }
-                );
+                );*/
 
             // Seed data for ParkingSlots
             modelBuilder.Entity<ParkingSlots>().HasData(

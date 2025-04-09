@@ -10,7 +10,7 @@ namespace ParkingFlow.Models
 
         [Required]
         [Display(Name = "User ID")]
-        public string UserId { get; set; } //the foreign key to AspNetUsers
+        public string? UserId { get; set; } //the foreign key to AspNetUsers
 
         [Required]
         [Display(Name = "Parking Slot")]
