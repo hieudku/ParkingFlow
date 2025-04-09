@@ -74,6 +74,13 @@ namespace ParkingFlow.Controllers
             ModelState.Remove(nameof(bookings.UserId));
             if (ModelState.IsValid)
             {
+                // Mark slot as occupied
+                var parkingSlot = await _context.ParkingSlots.FindAsync(bookings.ParkingSlotId);
+                if (parkingSlot != null)
+                {
+                    parkingSlot.IsVacant = false;
+                    _context.ParkingSlots.Update(parkingSlot);
+                }
                 _context.Add(bookings);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
