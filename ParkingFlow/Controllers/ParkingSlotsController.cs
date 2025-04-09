@@ -21,7 +21,7 @@ namespace ParkingFlow.Controllers
         {
             return View();
         }
-
+        // Create action method to add new parking slots
         [HttpPost]
         public IActionResult Create(ParkingSlots parkingSlot)
         {
@@ -32,6 +32,38 @@ namespace ParkingFlow.Controllers
                 return RedirectToAction("Index");
             }
             return View(parkingSlot);
+        }
+
+        // Edit action method to update parking slot details
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            ParkingSlots? categoryFromDb = _db.ParkingSlots.Find(id);
+
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(categoryFromDb);
+        }
+        [HttpPost]
+        public IActionResult Edit(ParkingSlots obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.ParkingSlots.Update(obj);
+                _db.SaveChanges();
+                TempData["success"] = "Parking Slot updated successfully";
+                return RedirectToAction("Index");
+            }
+            else if (!ModelState.IsValid)
+            {
+                TempData["error"] = "Failed to edit category";
+            }
+            return View();
         }
     }
 }
