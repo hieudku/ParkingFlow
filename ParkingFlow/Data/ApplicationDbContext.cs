@@ -19,6 +19,14 @@ namespace ParkingFlow.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Configure the primary key for Bookings
+            modelBuilder.Entity<Bookings>()
+                .HasOne(b => b.ParkingSlot)
+                .WithMany(p => p.Bookings)
+                .HasForeignKey(b => b.ParkingSlotId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Seed sample data for Bookings
             modelBuilder.Entity<Bookings>().HasData(
                 new Bookings

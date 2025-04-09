@@ -17,7 +17,7 @@ namespace ParkingFlow.Models
         public int ParkingSlotId { get; set; }
 
         [ForeignKey("ParkingSlotId")]
-        public ParkingSlots ParkingSlot { get; set; }
+        public ParkingSlots? ParkingSlot { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
