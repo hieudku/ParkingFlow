@@ -137,13 +137,14 @@
                                 <a asp-controller="ParkingSlots" asp-action="Edit" asp-route-id="@slot.Id" class="btn btn-sm btn-outline-warning">✏️ Edit</a>
                                 <a asp-controller="ParkingSlots" asp-action="Delete" asp-route-id="@slot.Id" class="btn btn-sm btn-outline-danger">🗑️ Delete</a>
                             }
-                            @if (User.IsInRole("User") && slot.IsVacant)
-                            {
-                                <a asp-controller="Bookings" asp-action="Create" asp-route-slotId="@slot.Id" class="btn btn-sm btn-success mt-2">
-                                    🅿️ Book
-                                </a>
-                            }
+                            
                         </div>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("User") && slot.IsVacant)
+                        {
+                            <a asp-controller="Bookings" asp-action="Create" asp-route-slotId="@slot.Id" class="btn btn-sm btn-success mt-2">
+                                Book
+                            </a>
+                        }
                     </div>
                 }
             </div>

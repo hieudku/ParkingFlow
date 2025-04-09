@@ -143,6 +143,10 @@ namespace ParkingFlow
                 {
                     logger.LogError("Failed to create normal user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
+                if (!await userManager.IsInRoleAsync(normalUser, "User"))
+                {
+                    await userManager.AddToRoleAsync(normalUser, "User");
+                }
             }
         }
     }
