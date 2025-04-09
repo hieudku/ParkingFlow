@@ -28,10 +28,24 @@ namespace ParkingFlow.Controllers
         // GET: Bookings
         public async Task<IActionResult> Index()
         {
-            _logger.LogInformation("Current user ID is: {UserId}", _userManager.GetUserId(User));
+            var userId = _userManager.GetUserId(User);
+            if (User.IsInRole("Admin")) // Admin can view all bookings
+            {
+                var allBookings = await _context.Bookings
+                    .Include(b => b.ParkingSlot)
+                    .Include(b => b.ParkingSlot)
+                    .OrderByDescending(b => b.BookingDate)
+                    .ToListAsync();
 
-            var applicationDbContext = _context.Bookings.Include(b => b.ParkingSlot);
-            return View(await applicationDbContext.ToListAsync());
+                return View(allBookings);
+            }
+            var userBookings = await _context.Bookings
+                .Include(b => b.ParkingSlot)
+                .Where(b => b.UserId == userId)
+                .OrderByDescending(b => b.BookingDate)
+                .ToListAsync();
+
+            return View(userBookings);
         }
 
         // GET: Bookings/Details/5
