@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ParkingFlow.Data;
 using ParkingFlow.Models;
 
@@ -17,12 +18,16 @@ namespace ParkingFlow.Controllers
             return View(parkingSlots);
         }
 
+        // Create action method to add new parking slots
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
-        // Create action method to add new parking slots
+        
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(ParkingSlots parkingSlot)
         {
             if (ModelState.IsValid)
@@ -35,6 +40,7 @@ namespace ParkingFlow.Controllers
         }
 
         // Edit action method to update parking slot details
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int? id)
         {
             if (id == null || id == 0)
@@ -50,6 +56,7 @@ namespace ParkingFlow.Controllers
             return View(categoryFromDb);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(ParkingSlots obj)
         {
             if (ModelState.IsValid)
@@ -67,7 +74,7 @@ namespace ParkingFlow.Controllers
         }
 
         // Delete action method to remove parking slots
-        // Delete
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
@@ -83,6 +90,7 @@ namespace ParkingFlow.Controllers
             return View(categoryFromDb);
         }
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeletePOST(int? id)
         {
             ParkingSlots? obj = _db.ParkingSlots.Find(id);
