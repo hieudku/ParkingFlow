@@ -46,9 +46,9 @@ namespace ParkingFlow.Controllers
         }
 
         // GET: Bookings/Create
-        public IActionResult Create()
+        public IActionResult Create(int? slotId)
         {
-            ViewData["ParkingSlotId"] = new SelectList(_context.ParkingSlots, "Id", "SlotCode");
+            ViewData["ParkingSlotId"] = new SelectList(_context.ParkingSlots, "Id", "SlotCode", slotId);
             return View();
         }
 

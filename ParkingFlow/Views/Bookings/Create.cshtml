@@ -1,4 +1,7 @@
-﻿@model ParkingFlow.Models.Bookings
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@model ParkingFlow.Models.Bookings
 
 @{
     ViewData["Title"] = "Create";
