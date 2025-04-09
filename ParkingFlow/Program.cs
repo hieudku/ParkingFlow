@@ -29,7 +29,7 @@ namespace ParkingFlow
 
             var app = builder.Build();
 
-            // Seed admin role and admin user
+            // Seed roles and users
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -37,16 +37,11 @@ namespace ParkingFlow
 
                 try
                 {
-
-                    // Seed Admin role and optionally an Admin user
-                    await CreateRoles(services, logger);
-
-                    // Call the method to seed the normal user
-                    await CreateNormalUser(services, logger);
+                    await SeedRolesAndUsersAsync(services, logger);
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, "An error occurred while seeding the admin role and user.");
+                    logger.LogError(ex, "An error occurred while seeding roles and users.");
                 }
             }
 
@@ -58,7 +53,6 @@ namespace ParkingFlow
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -67,6 +61,7 @@ namespace ParkingFlow
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
@@ -75,90 +70,78 @@ namespace ParkingFlow
             app.MapRazorPages();
 
             app.Run();
+        }
 
+        /// <summary>Seed roles and user accounts</summary>
+        private static async Task SeedRolesAndUsersAsync(IServiceProvider serviceProvider, ILogger logger)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-            /// <summary>Create and seed admin account and admin role</summary>
-            async Task CreateRoles(IServiceProvider serviceProvider, ILogger logger)
+            // Roles check
+            string[] roles = new[] { "Admin", "User" };
+            foreach (var role in roles)
             {
-                var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
-                if (!await roleManager.RoleExistsAsync("Admin"))
+                if (!await roleManager.RoleExistsAsync(role))
                 {
-                    logger.LogInformation("Admin role created");
-                    await roleManager.CreateAsync(new IdentityRole("Admin"));
-                }
-
-                var adminEmail = "admin@parkingflow.com";
-                var adminPassword = "Admin123!";
-                var adminUser = await userManager.FindByEmailAsync(adminEmail);
-
-                if (adminUser == null)
-                {
-                    logger.LogInformation("Creating admin user..");
-
-                    var admin = new IdentityUser
-                    {
-                        UserName = adminEmail,
-                        Email = adminEmail,
-                        EmailConfirmed = true
-                    };
-
-                    var createAdminResult = await userManager.CreateAsync(admin, adminPassword);
-
-                    if (createAdminResult.Succeeded)
-                    {
-                        logger.LogInformation("Admin user created successfully");
-                        await userManager.AddToRoleAsync(admin, "Admin");
-                    }
-                    else
-                    {
-                        logger.LogError("Failed to create admin user: {Errors}", string.Join(", ", createAdminResult.Errors.Select(e => e.Description)));
-                    }
-                }
-                else
-                {
-                    logger.LogError("Admin user already exists");
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                    logger.LogInformation($"{role} role created.");
                 }
             }
 
-            /// <summary>Seed the normal user account</summary>
-            async Task CreateNormalUser(IServiceProvider serviceProvider, ILogger logger)
+            // Seed Admin user
+            var adminEmail = "admin@parkingflow.com";
+            var adminPassword = "Admin123!";
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+            if (adminUser == null)
             {
-                var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                logger.LogInformation("Creating admin user...");
 
-                // Define a regular user's credentials
-                var normalUserEmail = "user@parkingflow.com";
-                var normalUserPassword = "User123!";
-
-                // Check if the user already exists
-                var normalUser = await userManager.FindByEmailAsync(normalUserEmail);
-
-                if (normalUser == null)
+                adminUser = new IdentityUser
                 {
-                    logger.LogInformation("Creating normal user...");
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    EmailConfirmed = true
+                };
 
-                    var user = new IdentityUser
-                    {
-                        UserName = normalUserEmail,
-                        Email = normalUserEmail,
-                        EmailConfirmed = true
-                    };
-
-                    var createUserResult = await userManager.CreateAsync(user, normalUserPassword);
-
-                    if (createUserResult.Succeeded)
-                    {
-                        logger.LogInformation("Normal user created successfully.");
-                    }
-                    else
-                    {
-                        logger.LogError("Failed to create normal user: {Errors}", string.Join(", ", createUserResult.Errors.Select(e => e.Description)));
-                    }
+                var result = await userManager.CreateAsync(adminUser, adminPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                    logger.LogInformation("Admin user created and assigned to Admin role.");
                 }
                 else
                 {
-                    logger.LogInformation("Normal user already exists.");
+                    logger.LogError("Failed to create admin user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+            }
+
+            // Seed Normal User
+            var userEmail = "user@parkingflow.com";
+            var userPassword = "User123!";
+            var normalUser = await userManager.FindByEmailAsync(userEmail);
+
+            if (normalUser == null)
+            {
+                logger.LogInformation("Creating normal user...");
+
+                normalUser = new IdentityUser
+                {
+                    UserName = userEmail,
+                    Email = userEmail,
+                    EmailConfirmed = true
+                };
+
+                var result = await userManager.CreateAsync(normalUser, userPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(normalUser, "User");
+                    logger.LogInformation("Normal user created and assigned to User role.");
+                }
+                else
+                {
+                    logger.LogError("Failed to create normal user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
             }
         }
