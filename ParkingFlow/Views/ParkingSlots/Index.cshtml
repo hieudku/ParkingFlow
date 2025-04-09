@@ -1,4 +1,7 @@
-﻿@model List<ParkingFlow.Models.ParkingSlots>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@model List<ParkingFlow.Models.ParkingSlots>
 
 @{
     ViewData["Title"] = "Admin Parking Slots Dashboard";
@@ -11,99 +14,102 @@
 
 <style>
     .parking-section {
-        margin-bottom: 40px;
+    margin-bottom: 40px;
     }
 
     .street-heading {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 20px;
-        border-bottom: 2px solid #aaa;
-        padding-bottom: 8px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #aaa;
+    padding-bottom: 8px;
     }
 
     .parking-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 20px;
-        padding: 10px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
+    padding: 10px 0;
     }
 
     .slot-card {
-        position: relative;
-        padding: 16px;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        transition: 0.3s ease;
-        cursor: pointer;
-        border: 3px solid;
+    position: relative;
+    padding: 16px;
+    border-radius: 12px;
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: 0.3s ease;
+    cursor: pointer;
+    border: 3px solid;
     }
 
-        .slot-card:hover {
-            transform: translateY(-5px);
-        }
+    .slot-card:hover {
+    transform: translateY(-5px);
+    }
 
     .slot-available {
-        background-color: #d4edda;
-        border-color: #28a745;
-        color: #155724;
+    background-color: #d4edda;
+    border-color: #28a745;
+    color: #155724;
     }
 
     .slot-occupied {
-        background-color: #f8d7da;
-        border-color: #dc3545;
-        color: #721c24;
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
     }
 
     .slot-code {
-        font-weight: bold;
-        font-size: 1.3rem;
-        display: block;
-        margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    display: block;
+    margin-bottom: 8px;
     }
 
     .slot-location {
-        font-size: 0.9rem;
-        margin-bottom: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
     }
 
     .status-badge {
-        font-size: 0.8rem;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-weight: bold;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: bold;
     }
 
     .status-available {
-        background-color: #28a745;
-        color: white;
+    background-color: #28a745;
+    color: white;
     }
 
     .status-occupied {
-        background-color: #dc3545;
-        color: white;
+    background-color: #dc3545;
+    color: white;
     }
 
     .card-actions {
-        margin-top: 10px;
+    margin-top: 10px;
     }
 
-        .card-actions a {
-            font-size: 0.8rem;
-            margin: 0 4px;
-        }
+    .card-actions a {
+    font-size: 0.8rem;
+    margin: 0 4px;
+    }
 </style>
 
 <div class="container">
     <div class="row pt-4 pb-3">
         <div class="col-6">
-            <h1 class="mt-4">Admin Parking Slots Dashboard</h1>
+            <h1 class="mt-4">Parking Slots Dashboard</h1>
             <p class="text-muted">Visually manage slots by streets/sections.</p>
             <hr />
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="ParkingSlots" asp-action="Create" class="btn btn-primary">Create New Parking Slot</a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="ParkingSlots" asp-action="Create" class="btn btn-primary">Create New Parking Slot</a>
+            }
         </div>
     </div>
 
@@ -122,7 +128,9 @@
                     <div class="slot-card @statusClass" title="Slot: @slot.SlotCode">
                         <span class="slot-code">@slot.SlotCode</span>
                         <span class="slot-location">@slot.Location</span>
-                        <span class="status-badge @badgeClass">@statusText</span>
+                        <div class="mt-2">
+                            <span class="status-badge @badgeClass d-block">@statusText</span>
+                        </div>
                         <div class="card-actions">
                             <a asp-controller="ParkingSlots" asp-action="Edit" asp-route-id="@slot.Id" class="btn btn-sm btn-outline-warning">✏️ Edit</a>
                             <a asp-controller="ParkingSlots" asp-action="Delete" asp-route-id="@slot.Id" class="btn btn-sm btn-outline-danger">🗑️ Delete</a>
