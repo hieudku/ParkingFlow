@@ -106,6 +106,9 @@
             <hr />
         </div>
         <div class="col-6 text-end">
+            <div class="text-right">
+                <p><strong>Current Time:</strong> <span id="currentTime"></span></p>
+            </div>
             @if (User.IsInRole("Admin"))
             {
                 <a asp-controller="ParkingSlots" asp-action="Create" class="btn btn-primary">Create New Parking Slot</a>
@@ -151,3 +154,15 @@
         </div>
     }
 </div>
+@section Scripts {
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const formatted = now.toLocaleString();
+            document.getElementById("currentTime").innerText = formatted;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+}

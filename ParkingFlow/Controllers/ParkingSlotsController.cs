@@ -14,6 +14,7 @@ namespace ParkingFlow.Controllers
         }
         public IActionResult Index()
         {
+            ViewBag.CurrentDateTime = DateTime.Now;
             List<ParkingSlots> parkingSlots = _db.ParkingSlots.ToList();
             return View(parkingSlots);
         }
