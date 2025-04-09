@@ -1,0 +1,31 @@
+﻿@model ParkingSlots
+<form method="post">
+    <input asp-for="Id" hidden />
+    <div class="row pb-2">
+        <h2 class="text-primary">Delete Parking Slot</h2>
+        <hr />
+    </div>
+    <div asp-validation-summary="All"></div>
+
+    <div class="mb-3 row p-1">
+        <label asp-for="SlotCode" class="p-0"> </label>
+        <input asp-for="SlotCode" disabled class="form-control" />
+    </div>
+
+    <div class="mb-3 row p-1">
+        <label asp-for="Location" class="p-0"> </label>
+        <input asp-for="Location" disabled class="form-control" />
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <button type="submit" class="btn btn-danger form-control">Delete</button>
+        </div>
+
+        <div class="col-6">
+            <a asp-controller="ParkingSlots" asp-action="Index" class="btn btn-secondary border form-control">
+                Back to list
+            </a>
+        </div>
+    </div>
+</form>

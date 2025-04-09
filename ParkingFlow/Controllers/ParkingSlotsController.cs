@@ -65,5 +65,35 @@ namespace ParkingFlow.Controllers
             }
             return View();
         }
+
+        // Delete action method to remove parking slots
+        // Delete
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            ParkingSlots? categoryFromDb = _db.ParkingSlots.Find(id);
+
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(categoryFromDb);
+        }
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeletePOST(int? id)
+        {
+            ParkingSlots? obj = _db.ParkingSlots.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            _db.ParkingSlots.Remove(obj);
+            _db.SaveChanges();
+            TempData["success"] = "Delete successful!";
+            return RedirectToAction("Index");
+        }
     }
 }
