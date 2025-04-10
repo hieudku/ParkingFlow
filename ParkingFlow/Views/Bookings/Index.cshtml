@@ -1,60 +1,105 @@
-﻿
-@model IEnumerable<ParkingFlow.Models.Bookings>
+﻿@model IEnumerable<ParkingFlow.Models.Bookings>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Bookings";
+
+    string GetStatusLabel(ParkingFlow.Models.Bookings b)
+    {
+        var now = DateTime.Now;
+        var start = b.BookingDate.Date + b.StartTime;
+        var end = b.BookingDate.Date + b.EndTime;
+
+        if (now < start) return "Upcoming";
+        if (now >= start && now <= end) return "Ongoing";
+        return "Past";
+    }
+
+    string GetStatusClass(ParkingFlow.Models.Bookings b)
+    {
+        var label = GetStatusLabel(b);
+        return label switch
+        {
+            "Upcoming" => "badge bg-info text-white",
+            "Ongoing" => "badge bg-success text-white",
+            _ => "badge bg-primary text-white"
+        };
+    }
 }
 
-<h1>Bookings</h1>
+<style>
+    .booking-card {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        font-size: 0.9rem;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ParkingSlot)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BookingDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndTime)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParkingSlot.SlotCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookingDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndTime)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        .booking-card:hover {
+            background-color: #f0f0f0;
+            transition: 0.2s ease-in-out;
+        }
+
+    .booking-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+    .booking-meta {
+        color: #666;
+    }
+
+    .booking-actions {
+        text-align: right;
+        margin-top: 10px;
+    }
+
+        .booking-actions .btn {
+            margin-left: 6px;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+        }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.7em;
+        border-radius: 999px;
+    }
+</style>
+
+<div class="container mt-4">
+    <h3 class="mb-4">Bookings</h3>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No bookings available.
+        </div>
+    }
+    else
+    {
+        foreach (var b in Model.OrderByDescending(b => b.BookingDate).ThenBy(b => b.StartTime))
+        {
+            <div class="booking-card">
+                <div class="booking-header text-primary">
+                    <span>Slot: <strong>@b.ParkingSlot?.SlotCode</strong> - @b.ParkingSlot?.Location</span>
+                    <span class="@GetStatusClass(b)">@GetStatusLabel(b)</span>
+                </div>
+                <div class="booking-meta">
+                    <span><strong>Date:</strong> @b.BookingDate.ToShortDateString()</span> |
+                    <span><strong>Time:</strong> @b.StartTime.ToString(@"hh\:mm") - @b.EndTime.ToString(@"hh\:mm")</span>
+                </div>
+
+                <div class="booking-actions">
+                    <a asp-action="Edit" asp-route-id="@b.Id" class="btn btn-outline-warning btn-sm">Edit</a>
+                    <a asp-action="Details" asp-route-id="@b.Id" class="btn btn-outline-info btn-sm">Details</a>
+                    <a asp-action="Delete" asp-route-id="@b.Id" class="btn btn-outline-danger btn-sm">Delete</a>
+                </div>
+            </div>
+        }
+    }
+</div>
