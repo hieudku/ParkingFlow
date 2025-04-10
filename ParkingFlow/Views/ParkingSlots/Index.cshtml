@@ -107,9 +107,6 @@
             <hr />
         </div>
         <div class="col-6 text-end">
-            <div class="text-right">
-                <p><strong>Current Time:</strong> <span id="currentTime"></span></p>
-            </div>
             @if (User.IsInRole("Admin"))
             {
                 <a asp-controller="ParkingSlots" asp-action="Create" class="btn btn-primary">Create New Parking Slot</a>
