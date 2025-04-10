@@ -152,20 +152,24 @@
                             <span class="status-badge @badgeClass d-block">@statusText</span>
                         </div>
 
-                        @if (!slot.IsVacant)
+                        @if (!slot.IsVacant && ViewBag.BookingDate != null && ViewBag.StartTime != null && ViewBag.EndTime != null)
                         {
-                            var currentBooking = slot.Bookings.FirstOrDefault(b =>
-                            b.BookingDate.Date == DateTime.Today &&
-                            DateTime.Now.TimeOfDay >= b.StartTime &&
-                            DateTime.Now.TimeOfDay < b.EndTime);
+                            var filteredBooking = slot.Bookings.FirstOrDefault(b =>
+                            b.BookingDate.Date == ((DateTime)ViewBag.BookingDate).Date &&
+                            (
+                            ((TimeSpan)ViewBag.StartTime >= b.StartTime && (TimeSpan)ViewBag.StartTime < b.EndTime) ||
+                            ((TimeSpan)ViewBag.EndTime > b.StartTime && (TimeSpan)ViewBag.EndTime <= b.EndTime) ||
+                            ((TimeSpan)ViewBag.StartTime <= b.StartTime && (TimeSpan)ViewBag.EndTime >= b.EndTime)
+                            ));
 
-                            if (currentBooking != null)
+                            if (filteredBooking != null)
                             {
-                                <div class="mt-2 small text-primary">
-                                    Booked: @currentBooking.StartTime.ToString(@"hh\:mm") - @currentBooking.EndTime.ToString(@"hh\:mm")
+                                <div class="mt-2 small text-muted">
+                                    Booked: @filteredBooking.StartTime.ToString(@"hh\:mm") - @filteredBooking.EndTime.ToString(@"hh\:mm")
                                 </div>
                             }
                         }
+
 
 
                         <div class="card-actions">

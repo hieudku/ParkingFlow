@@ -18,11 +18,9 @@ namespace ParkingFlow.Controllers
         public IActionResult Index(DateTime? bookingDate, TimeSpan? startTime, TimeSpan? endTime)
         {
             ViewBag.CurrentDateTime = DateTime.Now;
-
-            // Default to current date/time if not provided
-            var dateToCheck = bookingDate ?? DateTime.Today;
-            var startToCheck = startTime ?? DateTime.Now.TimeOfDay;
-            var endToCheck = endTime ?? DateTime.Now.TimeOfDay.Add(TimeSpan.FromMinutes(30)); // 30 mins window
+            ViewBag.BookingDate = bookingDate;
+            ViewBag.StartTime = startTime;
+            ViewBag.EndTime = endTime;
 
             var parkingSlots = _db.ParkingSlots
                 .Include(p => p.Bookings)
@@ -30,20 +28,26 @@ namespace ParkingFlow.Controllers
 
             foreach (var slot in parkingSlots)
             {
-                // Check for booking conflicts at the specified or current time
-                bool hasConflict = slot.Bookings.Any(b =>
-                    b.BookingDate.Date == dateToCheck.Date &&
-                    (
-                        (startToCheck >= b.StartTime && startToCheck < b.EndTime) ||
-                        (endToCheck > b.StartTime && endToCheck <= b.EndTime) ||
-                        (startToCheck <= b.StartTime && endToCheck >= b.EndTime)
-                    ));
+                slot.IsVacant = true;
 
-                slot.IsVacant = !hasConflict;
+                if (bookingDate.HasValue && startTime.HasValue && endTime.HasValue)
+                {
+                    var conflict = slot.Bookings.Any(b =>
+                        b.BookingDate.Date == bookingDate.Value.Date &&
+                        (
+                            (startTime >= b.StartTime && startTime < b.EndTime) ||
+                            (endTime > b.StartTime && endTime <= b.EndTime) ||
+                            (startTime <= b.StartTime && endTime >= b.EndTime)
+                        ));
+
+                    if (conflict)
+                        slot.IsVacant = false;
+                }
             }
 
             return View(parkingSlots);
         }
+
 
         // Create action method to add new parking slots
         [Authorize(Roles = "Admin")]
