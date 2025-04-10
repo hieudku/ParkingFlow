@@ -98,6 +98,7 @@
     }
 </style>
 
+
 <div class="container">
     <div class="row pt-4 pb-3">
         <div class="col-6">
@@ -115,7 +116,23 @@
             }
         </div>
     </div>
-
+    <form asp-action="Index" method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label>Date</label>
+            <input type="date" name="bookingDate" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+            <label>Start Time</label>
+            <input type="time" name="startTime" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+            <label>End Time</label>
+            <input type="time" name="endTime" class="form-control" required />
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Check Availability</button>
+        </div>
+    </form>
     @foreach (var group in groupedSlots)
     {
         <div class="parking-section">

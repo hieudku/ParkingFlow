@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ParkingFlow.Data;
 using ParkingFlow.Models;
 
@@ -12,10 +13,28 @@ namespace ParkingFlow.Controllers
         {
             _db = db;
         }
-        public IActionResult Index()
+
+        // GET: Filter parking slots based on booking date and time
+        public IActionResult Index(DateTime? bookingDate, TimeSpan? startTime, TimeSpan? endTime)
         {
             ViewBag.CurrentDateTime = DateTime.Now;
-            List<ParkingSlots> parkingSlots = _db.ParkingSlots.ToList();
+            var parkingSlots = _db.ParkingSlots
+                .Include(p => p.Bookings)
+                .ToList();
+            if (bookingDate.HasValue && startTime.HasValue && endTime.HasValue)
+            {
+                foreach (var slot in parkingSlots)
+                {
+                    bool hasConflict = slot.Bookings.Any(b =>
+                        b.BookingDate.Date == bookingDate.Value.Date &&
+                        (
+                            (startTime >= b.StartTime && startTime < b.EndTime) ||
+                            (endTime > b.StartTime && endTime <= b.EndTime) ||
+                            (startTime <= b.StartTime && endTime >= b.EndTime)
+                        ));
+                    slot.IsVacant = !hasConflict;
+                }
+            }
             return View(parkingSlots);
         }
 
