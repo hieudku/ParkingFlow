@@ -14,13 +14,13 @@ namespace ParkingFlow.Controllers
 {
     public class BookingsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<BookingsController> _logger;
 
         public BookingsController(ApplicationDbContext context, UserManager<IdentityUser> userManager, ILogger<BookingsController> logger)
         {
-            _context = context;
+            _db = context;
             _userManager = userManager;
             _logger = logger;
         }
@@ -31,7 +31,7 @@ namespace ParkingFlow.Controllers
             var userId = _userManager.GetUserId(User);
             if (User.IsInRole("Admin")) // Admin can view all bookings
             {
-                var allBookings = await _context.Bookings
+                var allBookings = await _db.Bookings
                     .Include(b => b.ParkingSlot)
                     .Include(b => b.ParkingSlot)
                     .OrderByDescending(b => b.BookingDate)
@@ -39,7 +39,7 @@ namespace ParkingFlow.Controllers
 
                 return View(allBookings);
             }
-            var userBookings = await _context.Bookings
+            var userBookings = await _db.Bookings
                 .Include(b => b.ParkingSlot)
                 .Where(b => b.UserId == userId)
                 .OrderByDescending(b => b.BookingDate)
@@ -56,7 +56,7 @@ namespace ParkingFlow.Controllers
                 return NotFound();
             }
 
-            var bookings = await _context.Bookings
+            var bookings = await _db.Bookings
                 .Include(b => b.ParkingSlot)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bookings == null)
@@ -70,7 +70,7 @@ namespace ParkingFlow.Controllers
         // GET: Bookings/Create
         public IActionResult Create(int? slotId)
         {
-            ViewData["ParkingSlotId"] = new SelectList(_context.ParkingSlots, "Id", "SlotCode", slotId);
+            ViewData["ParkingSlotId"] = new SelectList(_db.ParkingSlots, "Id", "SlotCode", slotId);
             return View();
         }
 
@@ -89,17 +89,24 @@ namespace ParkingFlow.Controllers
             if (ModelState.IsValid)
             {
                 // Mark slot as occupied
-                var parkingSlot = await _context.ParkingSlots.FindAsync(bookings.ParkingSlotId);
+                var parkingSlot = await _db.ParkingSlots.FindAsync(bookings.ParkingSlotId);
                 if (parkingSlot != null)
                 {
                     parkingSlot.IsVacant = false;
-                    _context.ParkingSlots.Update(parkingSlot);
+                    _db.ParkingSlots.Update(parkingSlot);
                 }
-                _context.Add(bookings);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _db.Add(bookings);
+                await _db.SaveChangesAsync();
+                return RedirectToAction(
+                    "Index", "ParkingSlots",
+                    new
+                    {
+                        bookingDate = bookings.BookingDate.ToString("yyyy-MM-dd"),
+                        startTime = bookings.StartTime.ToString(@"hh\:mm"),
+                        endTime = bookings.EndTime.ToString(@"hh\:mm")
+                    });
             }
-            ViewData["ParkingSlotId"] = new SelectList(_context.ParkingSlots, "Id", "SlotCode", bookings.ParkingSlotId);
+            ViewData["ParkingSlotId"] = new SelectList(_db.ParkingSlots, "Id", "SlotCode", bookings.ParkingSlotId);
             return View(bookings);
         }
 
@@ -111,12 +118,12 @@ namespace ParkingFlow.Controllers
                 return NotFound();
             }
 
-            var bookings = await _context.Bookings.FindAsync(id);
+            var bookings = await _db.Bookings.FindAsync(id);
             if (bookings == null)
             {
                 return NotFound();
             }
-            ViewData["ParkingSlotId"] = new SelectList(_context.ParkingSlots, "Id", "SlotCode", bookings.ParkingSlotId);
+            ViewData["ParkingSlotId"] = new SelectList(_db.ParkingSlots, "Id", "SlotCode", bookings.ParkingSlotId);
             return View(bookings);
         }
 
@@ -136,8 +143,8 @@ namespace ParkingFlow.Controllers
             {
                 try
                 {
-                    _context.Update(bookings);
-                    await _context.SaveChangesAsync();
+                    _db.Update(bookings);
+                    await _db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -152,7 +159,7 @@ namespace ParkingFlow.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ParkingSlotId"] = new SelectList(_context.ParkingSlots, "Id", "SlotCode", bookings.ParkingSlotId);
+            ViewData["ParkingSlotId"] = new SelectList(_db.ParkingSlots, "Id", "SlotCode", bookings.ParkingSlotId);
             return View(bookings);
         }
 
@@ -164,7 +171,7 @@ namespace ParkingFlow.Controllers
                 return NotFound();
             }
 
-            var bookings = await _context.Bookings
+            var bookings = await _db.Bookings
                 .Include(b => b.ParkingSlot)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bookings == null)
@@ -180,19 +187,19 @@ namespace ParkingFlow.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var bookings = await _context.Bookings.FindAsync(id);
+            var bookings = await _db.Bookings.FindAsync(id);
             if (bookings != null)
             {
-                _context.Bookings.Remove(bookings);
+                _db.Bookings.Remove(bookings);
             }
 
-            await _context.SaveChangesAsync();
+            await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookingsExists(int id)
         {
-            return _context.Bookings.Any(e => e.Id == id);
+            return _db.Bookings.Any(e => e.Id == id);
         }
     }
 }
