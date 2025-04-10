@@ -103,10 +103,13 @@
     <div class="row pt-4 pb-3">
         <div class="col-6">
             <h1 class="mt-4">Parking Slots Dashboard</h1>
-            <p class="text-muted">Visually manage slots by streets/sections.</p>
+            <p class="text-muted">Live availabilities of parking slots unless filtered by Date and Time.</p>
             <hr />
         </div>
         <div class="col-6 text-end">
+            <div class="text-right">
+                <p><strong>Current Time:</strong> <span id="currentTime"></span></p>
+            </div>
             @if (User.IsInRole("Admin"))
             {
                 <a asp-controller="ParkingSlots" asp-action="Create" class="btn btn-primary">Create New Parking Slot</a>
@@ -148,6 +151,23 @@
                         <div class="mt-2">
                             <span class="status-badge @badgeClass d-block">@statusText</span>
                         </div>
+
+                        @if (!slot.IsVacant)
+                        {
+                            var currentBooking = slot.Bookings.FirstOrDefault(b =>
+                            b.BookingDate.Date == DateTime.Today &&
+                            DateTime.Now.TimeOfDay >= b.StartTime &&
+                            DateTime.Now.TimeOfDay < b.EndTime);
+
+                            if (currentBooking != null)
+                            {
+                                <div class="mt-2 small text-primary">
+                                    Booked: @currentBooking.StartTime.ToString(@"hh\:mm") - @currentBooking.EndTime.ToString(@"hh\:mm")
+                                </div>
+                            }
+                        }
+
+
                         <div class="card-actions">
                             @if (User.IsInRole("Admin"))
                             {
