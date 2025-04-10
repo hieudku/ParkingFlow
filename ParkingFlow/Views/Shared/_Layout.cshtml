@@ -15,7 +15,9 @@
     <header>
         <nav class="navbar navbar-expand-xl bg-dark" data-bs-theme="dark">
             <div class="container-fluid">
-                <a class="navbar-brand link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">Navbar</a>
+                <a class="navbar-brand d-flex align-items-center gap-2 text-primary fw-bold fs-4" href="/">
+                    <i class="fas fa-parking"></i> ParkingFlow
+                </a>                
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -29,7 +31,7 @@
                                 <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="ParkingSlots" asp-action="Index">View Slots</a>
+                                <a class="nav-link" asp-area="" asp-controller="ParkingSlots" asp-action="Index">Find Parkings</a>
                             </li>
                             @if (User.IsInRole("Admin") || User.IsInRole("User"))
                             {
