@@ -66,7 +66,7 @@ namespace ParkingFlow
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=ParkingSlots}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
             app.Run();

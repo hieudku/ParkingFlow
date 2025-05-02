@@ -2,7 +2,25 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center text-white mt-5">
+    <h1 class="display-4 fw-bold">Welcome to ParkingFlow</h1>
+    <p class="lead mt-3">Easily find and book parking slots around WelTec campus in real-time.</p>
+    <a asp-controller="ParkingSlots" asp-action="Index" class="btn btn-lg btn-outline-light mt-4 px-5">Get Started</a>
+</div>
+<div class="row text-center text-white mt-5">
+    <div class="col-md-4">
+        <i class="fas fa-map-marker-alt fa-2x mb-2"></i>
+        <h5>Real-Time Availability</h5>
+        <p class="small">Check live availability from anywhere .</p>
+    </div>
+    <div class="col-md-4">
+        <i class="fas fa-calendar-check fa-2x mb-2"></i>
+        <h5>Book your spot</h5>
+        <p class="small">Reserve your spot in campus instead of fighting for it.</p>
+    </div>
+    <div class="col-md-4">
+        <i class="fas fa-user-lock fa-2x mb-2"></i>
+        <h5>Secure Access</h5>
+        <p class="small">User authentication for security.</p>
+    </div>
 </div>
