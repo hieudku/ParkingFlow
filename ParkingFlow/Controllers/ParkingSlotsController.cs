@@ -63,9 +63,14 @@ namespace ParkingFlow.Controllers
         {
             if (ModelState.IsValid)
             {
+                TempData["success"] = "Parking Slot created successfully";
                 _db.ParkingSlots.Add(parkingSlot);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
+            }
+            else if (!ModelState.IsValid)
+            {
+                TempData["error"] = "Failed to create parking slot";
             }
             return View(parkingSlot);
         }
@@ -99,7 +104,7 @@ namespace ParkingFlow.Controllers
             }
             else if (!ModelState.IsValid)
             {
-                TempData["error"] = "Failed to edit category";
+                TempData["error"] = "Failed to update Slot. Please check for errors";
             }
             return View();
         }

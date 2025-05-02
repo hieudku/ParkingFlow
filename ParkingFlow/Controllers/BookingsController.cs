@@ -95,6 +95,7 @@ namespace ParkingFlow.Controllers
                     parkingSlot.IsVacant = false;
                     _db.ParkingSlots.Update(parkingSlot);
                 }
+                TempData["Success"] = "Booking created successfully!";
                 _db.Add(bookings);
                 await _db.SaveChangesAsync();
                 return RedirectToAction(
@@ -106,6 +107,7 @@ namespace ParkingFlow.Controllers
                         endTime = bookings.EndTime.ToString(@"hh\:mm")
                     });
             }
+            TempData["Error"] = "Failed to create booking. Please check the details and try again.";
             ViewData["ParkingSlotId"] = new SelectList(_db.ParkingSlots, "Id", "SlotCode", bookings.ParkingSlotId);
             return View(bookings);
         }
@@ -143,6 +145,7 @@ namespace ParkingFlow.Controllers
             {
                 try
                 {
+                    TempData["Success"] = "Booking updated successfully!";
                     _db.Update(bookings);
                     await _db.SaveChangesAsync();
                 }
@@ -159,6 +162,7 @@ namespace ParkingFlow.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            TempData["Error"] = "Failed to update booking. Please check the details and try again.";
             ViewData["ParkingSlotId"] = new SelectList(_db.ParkingSlots, "Id", "SlotCode", bookings.ParkingSlotId);
             return View(bookings);
         }
@@ -190,6 +194,7 @@ namespace ParkingFlow.Controllers
             var bookings = await _db.Bookings.FindAsync(id);
             if (bookings != null)
             {
+                TempData["Success"] = "Booking deleted successfully!";
                 _db.Bookings.Remove(bookings);
             }
 

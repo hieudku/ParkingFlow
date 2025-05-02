@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ParkingFlow.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
 </head>
 <body>
     <header>
@@ -28,9 +29,6 @@
                                 <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="ParkingSlots" asp-action="Index">Find Parkings</a>
                             </li>
                             @if (User.IsInRole("Admin") || User.IsInRole("User"))
@@ -39,6 +37,7 @@
                                     <a class="nav-link" asp-area="" asp-controller="Bookings" asp-action="Index">View Bookings</a>
                                 </li>
                             }
+                            <!-- This drop down is for the later parts of the project
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">More</a>
                                 <div class="dropdown-menu">
@@ -49,6 +48,7 @@
                                     <a class="dropdown-item link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">About Us</a>
                                 </div>
                             </li>
+                            -->
                         </ul>
 
 
@@ -68,13 +68,14 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_Notification" />
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - ParkingFlow - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - ParkingFlow - <a asp-area="" asp-controller="Home" asp-action="Privacy">By Hieu and Shivam</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
