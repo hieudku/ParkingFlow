@@ -120,6 +120,7 @@ namespace ParkingFlow.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    TempData["success"] = "Account created successfully";
                     _logger.LogInformation("User created a new account with password.");
 
 
@@ -152,7 +153,7 @@ namespace ParkingFlow.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
+            TempData["error"] = "Failed to create account";
             // If we got this far, something failed, redisplay form
             return Page();
         }
