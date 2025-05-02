@@ -114,6 +114,7 @@ namespace ParkingFlow.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    TempData["success"] = "Login successful!";
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
@@ -132,7 +133,7 @@ namespace ParkingFlow.Areas.Identity.Pages.Account
                     return Page();
                 }
             }
-
+            TempData["error"] = "Invalid login attempt. Please check your email and password are correct.";
             // If we got this far, something failed, redisplay form
             return Page();
         }
