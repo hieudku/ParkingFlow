@@ -27,3 +27,32 @@ body {
     margin-bottom: 60px;
     font-family: 'Share Tech Mono', monospace;
 }
+.move-left-right {
+    position: relative;
+    animation: leftRight 4s infinite alternate ease-in-out;
+}
+
+
+@keyframes leftRight {
+    from {
+        left: 0px;
+    }
+
+    to {
+        left: 30px;
+    }
+}
+
+.move-right-left {
+    position: relative;
+    animation: rightLeft 4s infinite alternate ease-in-out;
+}
+@keyframes rightLeft {
+    from {
+        right: 0px;
+    }
+
+    to {
+        right: 30px;
+    }
+}
