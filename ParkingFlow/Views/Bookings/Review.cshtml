@@ -1,0 +1,47 @@
+﻿@model ParkingFlow.Models.Bookings
+
+@{
+    ViewData["Title"] = "Confirm Pending Booking";
+    var slot = ViewData["ParkingSlot"] as ParkingFlow.Models.ParkingSlots;
+}
+<br />
+<h2 class="tech-font text-center text-info fw-bold mb-4"><i class="fa-solid fa-circle-check text-success"></i> Confirm Your Booking</h2>
+<p class="tech-font text-center text-info mb-4">Are the details correct?</p>
+@if (Model != null && slot != null)
+{
+    <div class="tech-font card mx-auto shadow-lg border-0 rounded-4" style="max-width: 600px; background-color: #B1ECEB;">
+        <div class="card-body p-4">
+            <h4 class="text-primary fw-semibold mb-3">
+                Parking Slot: <span class="text-dark">@slot.SlotCode</span> <small class="text-dark">(@slot.Location)</small>
+            </h4>
+
+            <dl class="row mb-3">
+                <dt class="tech-font col-sm-4 text-primary"><i class="fa-solid fa-calendar-day text-info"></i> DATE:</dt>
+                <dd class="col-sm-8 text-dark">@Model.BookingDate.ToString("yyyy-MM-dd")</dd>
+
+                <dt class="tech-font col-sm-4 text-primary"><i class="fa-solid fa-clock text-warning"></i> START TIME:</dt>
+                <dd class="col-sm-8 text-dark">@Model.StartTime</dd>
+
+                <dt class="tech-font col-sm-4 text-primary"><i class="fa-solid fa-clock text-danger me-1"></i>END TIME:</dt>
+                <dd class="col-sm-8 text-dark">@Model.EndTime</dd>
+
+                <dt class="tech-font col-sm-4 text-primary"><i class="fa-solid fa-dollar-sign text-success me-1"></i> PRICE:</dt>
+                <dd class="col-sm-8 fw-bold text-success">$@ViewBag.Price</dd>
+            </dl>
+
+            <div class="d-flex justify-content-between">
+                <form asp-action="ConfirmBooking" method="post">
+                    <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-check me-1"></i>Confirm</button>
+                </form>
+
+                <form asp-action="CancelPending" method="post">
+                    <button type="submit" class="btn btn-outline-danger px-4">❌ Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning text-center">No pending booking found.</div>
+}

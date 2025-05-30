@@ -1,0 +1,35 @@
+﻿@model ParkingFlow.Models.PendingBooking
+@{
+    ViewData["Title"] = "Review Booking";
+}
+
+<h2>Review Your Pending Booking</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Slot</th>
+        <td>@Model.ParkingSlotId</td>
+    </tr>
+    <tr>
+        <th>Date</th>
+        <td>@Model.BookingDate.ToShortDateString()</td>
+    </tr>
+    <tr>
+        <th>Start</th>
+        <td>@Model.StartTime</td>
+    </tr>
+    <tr>
+        <th>End</th>
+        <td>@Model.EndTime</td>
+    </tr>
+    <tr>
+        <th>Total Price</th>
+        <td>$@Model.TotalPrice</td>
+    </tr>
+</table>
+
+<form asp-action="Clear" method="post">
+    <button class="btn btn-danger">Clear</button>
+</form>
+
+<a asp-controller="Payment" asp-action="Checkout" class="btn btn-success">Proceed to Payment</a>

@@ -26,51 +26,6 @@
     }
 }
 
-<style>
-    .booking-card {
-        background: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 12px 16px;
-        margin-bottom: 16px;
-        font-size: 0.9rem;
-    }
-
-        .booking-card:hover {
-            background-color: #f0f0f0;
-            transition: 0.2s ease-in-out;
-        }
-
-    .booking-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 4px;
-        font-weight: 500;
-    }
-
-    .booking-meta {
-        color: #666;
-    }
-
-    .booking-actions {
-        text-align: right;
-        margin-top: 10px;
-    }
-
-        .booking-actions .btn {
-            margin-left: 6px;
-            font-size: 0.75rem;
-            padding: 4px 8px;
-        }
-
-    .badge {
-        font-size: 0.75rem;
-        padding: 0.35em 0.7em;
-        border-radius: 999px;
-    }
-</style>
-
 <div class="container mt-4">
     <h3 class="mb-4">Bookings</h3>
 
@@ -82,22 +37,35 @@
     }
     else
     {
-        foreach (var b in Model.OrderByDescending(b => b.BookingDate).ThenBy(b => b.StartTime))
+        @foreach (var b in Model.OrderByDescending(b => b.BookingDate).ThenBy(b => b.StartTime))
         {
-            <div class="booking-card">
-                <div class="booking-header text-primary">
-                    <span>Slot: <strong>@b.ParkingSlot?.SlotCode</strong> - @b.ParkingSlot?.Location</span>
+            <div class="card shadow-sm border-0 mb-4 rounded-4 px-4 py-3 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-semibold text-danger-emphasis mb-0">
+                        <i class="fa-solid fa-car-side me-2 text-secondary"></i>
+                        Slot: <span class="text-danger">@b.ParkingSlot?.SlotCode</span> – <small class="text-secondary">@b.ParkingSlot?.Location</small>
+                    </h5>
                     <span class="@GetStatusClass(b)">@GetStatusLabel(b)</span>
                 </div>
-                <div class="booking-meta">
-                    <span><strong>Date:</strong> @b.BookingDate.ToShortDateString()</span> |
-                    <span><strong>Time:</strong> @b.StartTime.ToString(@"hh\:mm") - @b.EndTime.ToString(@"hh\:mm")</span>
-                </div>
 
-                <div class="booking-actions">
-                    <a asp-action="Edit" asp-route-id="@b.Id" class="btn btn-outline-warning btn-sm">Edit</a>
-                    <a asp-action="Details" asp-route-id="@b.Id" class="btn btn-outline-info btn-sm">Details</a>
-                    <a asp-action="Delete" asp-route-id="@b.Id" class="btn btn-outline-danger btn-sm">Delete</a>
+                <p class="mb-2 text-dark">
+                    <i class="fa-solid fa-calendar-day me-2 text-info"></i>
+                    <strong>Date:</strong> @b.BookingDate:dd/MM/yyyy
+                    &nbsp;|&nbsp;
+                    <i class="fa-solid fa-clock me-1 text-warning"></i>
+                    <strong>Time:</strong> @b.StartTime.ToString(@"hh\:mm") - @b.EndTime.ToString(@"hh\:mm")
+                </p>
+
+                <div class="d-flex gap-2 justify-content-end">
+                    <a asp-action="Edit" asp-route-id="@b.Id" class="btn btn-outline-warning btn-sm text-dark">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </a>
+                    <a asp-action="Details" asp-route-id="@b.Id" class="btn btn-outline-info btn-sm text-dark">
+                        <i class="fa-solid fa-circle-info"></i> Details
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@b.Id" class="btn btn-outline-danger btn-sm text-dark">
+                        <i class="fa-solid fa-trash-can"></i> Delete
+                    </a>
                 </div>
             </div>
         }

@@ -15,7 +15,7 @@ namespace ParkingFlow.Data
         public DbSet<ParkingSlots> ParkingSlots { get; set; }
         public DbSet<Bookings> Bookings { get; set; }
 
-        public DbSet<CartItem> CartItems { get; set; }
+
 
         // Seed parking slots data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,9 +28,7 @@ namespace ParkingFlow.Data
                 .WithMany(p => p.Bookings)
                 .HasForeignKey(b => b.ParkingSlotId)
                 .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<CartItem>()
-                .Property(c => c.TotalPrice)
-                .HasPrecision(18, 2);
+
             /* Seed sample data for Bookings
             modelBuilder.Entity<Bookings>().HasData(
                 new Bookings
