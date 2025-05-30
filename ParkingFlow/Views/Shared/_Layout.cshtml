@@ -21,56 +21,37 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <header>
-        <nav class="navbar navbar-expand-xl bg-dark" data-bs-theme="dark">
+        <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand d-flex align-items-center gap-2 text-primary fw-bold fs-4" href="/">
                     <i class="fas fa-parking"></i> ParkingFlow
-                </a>                
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                <!-- FIX: Only one .collapse here -->
                 <div class="collapse navbar-collapse" id="navbarColor01">
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="ParkingSlots" asp-action="Index">Find Parkings</a>
+                        </li>
+                        @if (User.IsInRole("Admin") || User.IsInRole("User"))
+                        {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                <a class="nav-link" asp-controller="Bookings" asp-action="Index">View Bookings</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="ParkingSlots" asp-action="Index">Find Parkings</a>
+                                <a class="nav-link" asp-controller="Bookings" asp-action="Review">My Pending Booking</a>
                             </li>
-                            @if (User.IsInRole("Admin") || User.IsInRole("User"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Bookings" asp-action="Index">View Bookings</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Bookings" asp-action="Review">My Pending Booking</a>
-                                </li>
-                            }
-                            <!-- This drop down is for the later parts of the project
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">More</a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">Live Parkings</a>
-                                    <a class="dropdown-item link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">Bookings History</a>
-                                    <a class="dropdown-item link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">Donate</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">About Us</a>
-                                </div>
-                            </li>
-                            -->
-                        </ul>
-
-
-
-                        <partial name="_LoginPartial" />
-                    </div>
-                        
+                        }
                     </ul>
-                    <!--<form class="d-flex">
-                        <input class="form-control me-sm-2" type="search" placeholder="Search">
-                        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                    </form>-->
+
+                    <!-- Keep this outside the nav items -->
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
@@ -80,7 +61,6 @@
             <partial name="_Notification" />
             @RenderBody()
         </main>
-    </div>
 
     <footer class="bg-dark text-light mt-5 pt-4 pb-3 border-top shadow-sm">
         <div class="container text-center">
