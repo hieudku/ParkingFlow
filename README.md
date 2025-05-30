@@ -130,7 +130,7 @@ This project is released under the MIT License. See <code>LICENSE</code> file fo
 <h2>Author</h2>
 
 <ul>
-  <li>Hieu Cu</li>
-  <li>Shivam Arora</li>
+  <li>Hieu Cu (Lead)</li>
+  <li>Shivam Arora (Tester)</li>
 </ul>
 
