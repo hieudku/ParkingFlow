@@ -9,6 +9,8 @@ using ParkingFlow.Data;
 using ParkingFlow.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using ParkingFlow.Helpers;
+using Stripe.Checkout;
 
 namespace ParkingFlow.Controllers
 {
@@ -32,7 +34,6 @@ namespace ParkingFlow.Controllers
             if (User.IsInRole("Admin")) // Admin can view all bookings
             {
                 var allBookings = await _db.Bookings
-                    .Include(b => b.ParkingSlot)
                     .Include(b => b.ParkingSlot)
                     .OrderByDescending(b => b.BookingDate)
                     .ToListAsync();
@@ -75,41 +76,130 @@ namespace ParkingFlow.Controllers
         }
 
         // POST: Bookings/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ParkingSlotId,BookingDate,StartTime,EndTime")] Bookings bookings)
+        public IActionResult Create([Bind("Id,ParkingSlotId,BookingDate,StartTime,EndTime")] Bookings bookings)
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                bookings.UserId = _userManager.GetUserId(User)!; // Set the UserId to the logged-in user's ID
+                bookings.UserId = _userManager.GetUserId(User)!;
             }
+
             ModelState.Remove(nameof(bookings.UserId));
             if (ModelState.IsValid)
             {
-                // Mark slot as occupied
-                var parkingSlot = await _db.ParkingSlots.FindAsync(bookings.ParkingSlotId);
-                if (parkingSlot != null)
-                {
-                    parkingSlot.IsVacant = false;
-                    _db.ParkingSlots.Update(parkingSlot);
-                }
-                TempData["Success"] = "Booking created successfully!";
-                _db.Add(bookings);
-                await _db.SaveChangesAsync();
-                return RedirectToAction(
-                    "Index", "ParkingSlots",
-                    new
-                    {
-                        bookingDate = bookings.BookingDate.ToString("yyyy-MM-dd"),
-                        startTime = bookings.StartTime.ToString(@"hh\:mm"),
-                        endTime = bookings.EndTime.ToString(@"hh\:mm")
-                    });
+                HttpContext.Session.SetObject("PendingBooking", bookings);
+                return RedirectToAction("Review");
             }
-            TempData["Error"] = "Failed to create booking. Please check the details and try again.";
+
+            TempData["Error"] = "Failed to process booking. Please check the details.";
             ViewData["ParkingSlotId"] = new SelectList(_db.ParkingSlots, "Id", "SlotCode", bookings.ParkingSlotId);
             return View(bookings);
+        }
+
+        // GET: Bookings/Review
+        public IActionResult Review()
+        {
+            var pendingBooking = HttpContext.Session.GetObject<Bookings>("PendingBooking");
+            if (pendingBooking == null)
+            {
+                TempData["Error"] = "No pending booking found.";
+                return RedirectToAction(nameof(Create));
+            }
+
+            var slot = _db.ParkingSlots.FirstOrDefault(s => s.Id == pendingBooking.ParkingSlotId);
+            ViewData["ParkingSlot"] = slot;
+
+            // Calculate price ($2 per hour)
+            var duration = pendingBooking.EndTime - pendingBooking.StartTime;
+            var hourlyRate = 2m;
+            var totalHours = Math.Ceiling(duration.TotalMinutes / 60);
+            var totalPrice = (decimal)totalHours * hourlyRate;
+
+            ViewBag.Price = totalPrice.ToString("0.00");
+
+            return View(pendingBooking);
+        }
+
+        // POST: Bookings/CreateStripeSession
+        [HttpPost]
+        public async Task<IActionResult> CreateStripeSession()
+        {
+            var booking = HttpContext.Session.GetObject<Bookings>("PendingBooking");
+            if (booking == null) return RedirectToAction("Review");
+
+            var price = HttpContext.Session.GetString("PendingPrice");
+            var domain = "https://localhost:7265";
+
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = domain + Url.Action("ConfirmBooking"),
+                CancelUrl = domain + Url.Action("CancelPending"),
+                Mode = "payment",
+                LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    UnitAmount = (long)(decimal.Parse(price) * 100),
+                    Currency = "nzd",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = $"Booking Slot {booking.ParkingSlotId}"
+                    }
+                },
+                Quantity = 1
+            }
+        }
+            };
+
+            var service = new SessionService();
+            Session session = await service.CreateAsync(options);
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelPending()
+        {
+            HttpContext.Session.Remove("PendingBooking");
+            TempData["Success"] = "Pending booking has been cancelled.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmBooking()
+        {
+            var pendingBooking = HttpContext.Session.GetObject<Bookings>("PendingBooking");
+
+            if (pendingBooking == null)
+            {
+                TempData["Error"] = "No pending booking found to confirm.";
+                return RedirectToAction(nameof(Create));
+            }
+
+            // Set UserId again just in case
+            pendingBooking.UserId = _userManager.GetUserId(User)!;
+
+            // Mark slot as occupied
+            var parkingSlot = await _db.ParkingSlots.FindAsync(pendingBooking.ParkingSlotId);
+            if (parkingSlot != null)
+            {
+                parkingSlot.IsVacant = false;
+                _db.ParkingSlots.Update(parkingSlot);
+            }
+
+            _db.Bookings.Add(pendingBooking);
+            await _db.SaveChangesAsync();
+
+            HttpContext.Session.Remove("PendingBooking"); // clear session
+
+            TempData["Success"] = "Booking confirmed successfully!";
+            return RedirectToAction("Index", "ParkingSlots");
         }
 
         // GET: Bookings/Edit/5
@@ -130,8 +220,6 @@ namespace ParkingFlow.Controllers
         }
 
         // POST: Bookings/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,ParkingSlotId,BookingDate,StartTime,EndTime")] Bookings bookings)

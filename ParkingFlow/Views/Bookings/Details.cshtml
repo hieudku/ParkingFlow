@@ -1,48 +1,53 @@
 ﻿@model ParkingFlow.Models.Bookings
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Booking Details";
 }
 
-<h1>Details</h1>
+<h2 class="mb-4 text-white">
+    <i class="fa-solid fa-circle-info text-info"></i> Booking Details
+</h2>
 
-<div>
-    <h4>Bookings</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ParkingSlot)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ParkingSlot.SlotCode)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BookingDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BookingDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndTime)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="card shadow-lg border-0 rounded-4 bg-white text-dark px-4 py-4 mb-5">
+
+    <div class="mb-3">
+        <h5 class="text-primary">
+            <i class="fa-solid fa-car-side me-2"></i>
+            Parking Slot:
+            <span class="text-danger">@Model.ParkingSlot?.SlotCode</span>
+            <small class="text-danger">(@Model.ParkingSlot?.Location)</small>
+        </h5>
+    </div>
+
+    <div class="mb-2">
+        <i class="fa-solid fa-calendar-day text-info me-2"></i>
+        <strong>Date:</strong>
+        @Model.BookingDate.ToString("yyyy-MM-dd")
+    </div>
+
+    <div class="mb-2">
+        <i class="fa-solid fa-clock text-warning me-2"></i>
+        <strong>Start Time:</strong>
+        @Model.StartTime.ToString(@"hh\:mm")
+    </div>
+
+    <div class="mb-2">
+        <i class="fa-regular fa-clock text-danger me-2"></i>
+        <strong>End Time:</strong>
+        @Model.EndTime.ToString(@"hh\:mm")
+    </div>
+
+    @* Hidden but present if needed later *@
+    <div class="d-none">
+        <strong>User ID:</strong> @Model.UserId
+    </div>
+
+    <div class="mt-4 d-flex gap-3">
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-warning text-dark">
+            <i class="fa-solid fa-pen"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-outline-primary text-dark">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 </div>

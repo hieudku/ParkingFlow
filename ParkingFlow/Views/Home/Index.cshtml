@@ -24,3 +24,84 @@
         <p class="small">User authentication for security.</p>
     </div>
 </div>
+
+@{
+    ViewData["Title"] = "How It Works";
+}
+<div>
+    <br />
+    <hr />
+</div>
+
+<h2 class="text-center mb-5">How It Works</h2>
+
+<div class="container">
+    <!-- Step 1 -->
+    <div class="move-right-left row align-items-center mb-5 p-4 border-start border-5 border-primary bg-gradient rounded shadow-sm">
+        <div class="col-md-6">
+            <h4><i class="bi bi-clock-history text-primary"></i> 1. 5-Minute Session Timer</h4>
+            <p>
+                Once you select a parking slot and time, you have <strong>5 minutes</strong> to confirm your booking.
+                If you leave the page or time out, the booking will be released.
+            </p>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="~/images/undraw_time-management_fedt.svg" alt="Session Timer" style="max-height: 150px;" />
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="move-left-right row flex-md-row-reverse align-items-center mb-5 p-4 border-end border-5 border-success bg-gradient rounded shadow-sm">
+        <div class="col-md-6">
+            <h4><i class="bi bi-calendar-check text-success"></i> 2. Booking Availability</h4>
+            <p>
+                Parking slots become <strong>bookable within 15 minutes</strong> of the current time. You can't book in the past.
+                This prevents outdated bookings while provide flexibility and breathing room for the last person.
+            </p>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="~/images/undraw_calendar_76t8.svg" alt="Booking Window" style="max-height: 150px;" />
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="move-right-left row align-items-center mb-5 p-4 border-start border-5 border-warning bg-gradient rounded shadow-sm">
+        <div class="col-md-6">
+            <h4><i class="bi bi-map text-warning"></i> 3. View and Choose Slots</h4>
+            <p>
+                Browse available slots grouped by street. Green cards indicate <strong>vacant</strong> slots. Red ones are already <strong>booked</strong>.
+                Click <strong>"Book"</strong> to reserve your spot.
+            </p>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="~/images/undraw_choose_j1ds.svg" alt="Slot Selection" style="max-height: 150px;" />
+        </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="move-left-right row flex-md-row-reverse align-items-center mb-5 p-4 border-end border-5 border-danger bg-gradient rounded shadow-sm">
+        <div class="col-md-6">
+            <h4><i class="bi bi-check-circle text-danger"></i> 4. Confirm or Cancel</h4>
+            <p>
+                After selecting your slot and time, you’ll be taken to a review page. There you can <strong>Confirm</strong> or <strong>Cancel</strong> the booking.
+                Unconfirmed bookings expire after 5 minutes.
+            </p>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="~/images/undraw_confirm_rds7.svg" alt="Confirm Booking" style="max-height: 150px;" />
+        </div>
+    </div>
+    <div class="row align-items-center mb-5 p-4 ">
+        <div class="col-md-6">
+            <p>
+                Done! Once confirmed, the parking is yours for the date and duration, without worrying about finding a spot on campus!
+            </p>
+            
+            <hr />
+            <a asp-controller="ParkingSlots" asp-action="Index" class="btn btn-lg btn-outline-light mt-4 px-5">Get Started</a>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="~/images/undraw_order-confirmed_m9e9.svg" alt="Slot Selection" style="max-height: 250px;" />
+        </div>
+    </div>
+</div>

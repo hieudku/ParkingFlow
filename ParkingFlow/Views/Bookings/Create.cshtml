@@ -1,50 +1,66 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-@model ParkingFlow.Models.Bookings
+﻿@model ParkingFlow.Models.Bookings
 
 @{
     ViewData["Title"] = "Create";
 }
+<br />
+<h1 class="fw-bold display-4 text-white mb-2">
+    <i class="fa-solid fa-pen-to-square"></i> Create
+</h1>
+<br />
+<h4 class="mb-4 text-white-40"><i class="fa-solid fa-calendar-plus"></i> Bookings</h4>
+<hr class="text-white" />
 
-<h1>Create</h1>
-
-<h4>Bookings</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ParkingSlotId" class="control-label"></label>
-                <select asp-for="ParkingSlotId" class ="form-control" asp-items="ViewBag.ParkingSlotId"></select>
+
+            <div class="form-group mb-3">
+                <label asp-for="ParkingSlotId" class="form-label text-white">
+                    <i class="fa-solid fa-car-side me-1"></i> Parking Slot
+                </label>
+                <select asp-for="ParkingSlotId" class="form-control text-primary" asp-items="ViewBag.ParkingSlotId"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="BookingDate" class="control-label"></label>
-                <input asp-for="BookingDate" class="form-control" />
-                <span asp-validation-for="BookingDate" class="text-danger"></span>
+
+            <div class="form-group mb-3">
+                <label asp-for="BookingDate" class="form-label text-white">
+                    <i class="fa-solid fa-calendar-day me-1"></i> Booking Date
+                </label>
+                <input asp-for="BookingDate" class="form-control" type="date" />
+                <span asp-validation-for="BookingDate" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="StartTime" class="control-label"></label>
-                <input asp-for="StartTime" class="form-control" />
-                <span asp-validation-for="StartTime" class="text-danger"></span>
+
+            <div class="form-group mb-3">
+                <label asp-for="StartTime" class="form-label text-white">
+                    <i class="fa-solid fa-clock me-1"></i> Start Time
+                </label>
+                <input asp-for="StartTime" class="form-control" type="time" />
+                <span asp-validation-for="StartTime" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="EndTime" class="control-label"></label>
-                <input asp-for="EndTime" class="form-control" />
-                <span asp-validation-for="EndTime" class="text-danger"></span>
+
+            <div class="form-group mb-4">
+                <label asp-for="EndTime" class="form-label text-white">
+                    <i class="fa-regular fa-clock me-1"></i> End Time
+                </label>
+                <input asp-for="EndTime" class="form-control" type="time" />
+                <span asp-validation-for="EndTime" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn btn-success">
+                    <i class="fa-solid fa-check me-1"></i> Create
+                </button>
+                <a asp-action="Index" class="btn btn-outline-light">
+                    <i class="fa-solid fa-arrow-left"></i> Back to List
+                </a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
