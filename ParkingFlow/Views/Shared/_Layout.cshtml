@@ -19,7 +19,7 @@
 
 
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-xl bg-dark" data-bs-theme="dark">
             <div class="container-fluid">
@@ -76,8 +76,7 @@
         </nav>
 
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <main role="main" class="container flex-grow-1 pb-3">
             <partial name="_Notification" />
             @RenderBody()
         </main>

@@ -6,8 +6,10 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    min-height: 100vh;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
 }
 html {
   font-size: 14px;
@@ -35,7 +37,6 @@ body {
     position: relative;
     animation: leftRight 4s infinite alternate ease-in-out;
 }
-
 
 @keyframes leftRight {
     from {
