@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ParkingFlow.Data;
 using ParkingFlow.Models;
+using Stripe;
 
 namespace ParkingFlow
 {
@@ -34,6 +35,9 @@ namespace ParkingFlow
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddControllersWithViews();
+
+            // Configure Stripe
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 

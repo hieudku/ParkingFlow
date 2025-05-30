@@ -30,14 +30,16 @@
             </dl>
 
             <div class="d-flex justify-content-between">
-                <form asp-action="ConfirmBooking" method="post">
-                    <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-check me-1"></i>Confirm</button>
+                <form asp-controller="Stripe" asp-action="CreateCheckoutSession" method="post">
+                    <input type="hidden" name="amount" value="@ViewBag.Price" />
+                    <button type="submit" class="btn btn-primary">Pay with Stripe</button>
                 </form>
 
                 <form asp-action="CancelPending" method="post">
                     <button type="submit" class="btn btn-outline-danger px-4">❌ Cancel</button>
                 </form>
             </div>
+
         </div>
     </div>
 }

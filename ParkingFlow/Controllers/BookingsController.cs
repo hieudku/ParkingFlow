@@ -10,6 +10,7 @@ using ParkingFlow.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using ParkingFlow.Helpers;
+using Stripe.Checkout;
 
 namespace ParkingFlow.Controllers
 {
@@ -106,9 +107,59 @@ namespace ParkingFlow.Controllers
                 return RedirectToAction(nameof(Create));
             }
 
-            ViewData["ParkingSlot"] = _db.ParkingSlots.FirstOrDefault(s => s.Id == pendingBooking.ParkingSlotId);
+            var slot = _db.ParkingSlots.FirstOrDefault(s => s.Id == pendingBooking.ParkingSlotId);
+            ViewData["ParkingSlot"] = slot;
+
+            // Calculate price ($2 per hour)
+            var duration = pendingBooking.EndTime - pendingBooking.StartTime;
+            var hourlyRate = 2m;
+            var totalHours = Math.Ceiling(duration.TotalMinutes / 60);
+            var totalPrice = (decimal)totalHours * hourlyRate;
+
+            ViewBag.Price = totalPrice.ToString("0.00");
+
             return View(pendingBooking);
         }
+
+        // POST: Bookings/CreateStripeSession
+        [HttpPost]
+        public async Task<IActionResult> CreateStripeSession()
+        {
+            var booking = HttpContext.Session.GetObject<Bookings>("PendingBooking");
+            if (booking == null) return RedirectToAction("Review");
+
+            var price = HttpContext.Session.GetString("PendingPrice");
+            var domain = "https://localhost:7265";
+
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = domain + Url.Action("ConfirmBooking"),
+                CancelUrl = domain + Url.Action("CancelPending"),
+                Mode = "payment",
+                LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    UnitAmount = (long)(decimal.Parse(price) * 100),
+                    Currency = "nzd",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = $"Booking Slot {booking.ParkingSlotId}"
+                    }
+                },
+                Quantity = 1
+            }
+        }
+            };
+
+            var service = new SessionService();
+            Session session = await service.CreateAsync(options);
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
