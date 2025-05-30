@@ -1,7 +1,7 @@
 <h1>ParkingFlow</h1>
 
 <p>
-ParkingFlow is a web-based parking management application built using ASP.NET Core MVC and SQL Server. It provides basic functionality for users to find and book parking spaces and for administrators to manage available slots and bookings. This project is suitable for educational purposes, prototyping, or as a starting point for building a full-featured parking reservation system.
+ParkingFlow is a web parking management application built using ASP.NET Core MVC and SQL Server. It provides basic functionality for users to find and book parking spaces and for administrators to manage available slots and bookings. This project is suitable for educational purposes, prototyping, or as a starting point for building a full-featured parking management system.
 </p>
 
 <hr/>
@@ -23,18 +23,18 @@ ParkingFlow is a web-based parking management application built using ASP.NET Co
 
 <h3>1. Clone the repository</h3>
 
-<pre><code>git clone https://github.com/your-username/parkingflow.git</code></pre>
+<pre><code>git clone https://github.com/hieudku/parkingflow.git</code></pre>
 
 <h3>2. Open the project</h3>
 
 <p>
-Open the solution in Visual Studio 2022 (or later). Ensure you have the required .NET SDK installed (e.g., .NET 6 or .NET 8 depending on your project settings).
+Open the solution in Visual Studio 2022 (or later). Make sure you have the required .NET SDK installed ( .NET 6 or .NET 8 depending on your project settings).
 </p>
 
 <h3>3. Set up the database connection</h3>
 
 <p>
-In <code>appsettings.json</code>, configure the connection string:
+In <code>appsettings.json</code>, configure the connection string(localdb):
 </p>
 
 <pre><code>
@@ -50,7 +50,7 @@ If deploying to Azure, store this value in your App Service Configuration settin
 <h3>4. Configure Stripe keys</h3>
 
 <p>
-Add your Stripe API keys in <code>appsettings.json</code> or as environment variables:
+Add your Stripe API keys in <code>appsettings.json</code> or as environment variables (recommended for good practice):
 </p>
 
 <pre><code>
@@ -77,7 +77,7 @@ Set the project as the startup project and run via Visual Studio or with the CLI
 <pre><code>dotnet run</code></pre>
 
 <p>
-Visit <code>https://localhost:5001</code> in your browser.
+Visit <code>https://localhost:5001</code> in your browser(localhost might differ).
 </p>
 
 <hr/>
@@ -131,4 +131,6 @@ This project is released under the MIT License. See <code>LICENSE</code> file fo
 
 <ul>
   <li>Hieu Cu</li>
+  <li>Shivam Arora</li>
 </ul>
+
