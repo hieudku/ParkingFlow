@@ -110,6 +110,14 @@ namespace ParkingFlow.Controllers
             return View(pendingBooking);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelPending()
+        {
+            HttpContext.Session.Remove("PendingBooking");
+            TempData["Success"] = "Pending booking has been cancelled.";
+            return RedirectToAction(nameof(Index));
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
