@@ -83,9 +83,23 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - ParkingFlow - <a asp-area="" asp-controller="Home" asp-action="Privacy">By Hieu and Shivam</a>
+    <footer class="bg-dark text-light mt-5 pt-4 pb-3 border-top shadow-sm">
+        <div class="container text-center">
+            <div class="mb-3">
+                <i class="fa-brands fa-stripe fa-lg mx-2"></i>
+                <i class="fa-brands fa-microsoft fa-lg mx-2"></i>
+                <i class="fa-solid fa-database fa-lg mx-2"></i>
+                <i class="fa-brands fa-html5 fa-lg mx-2"></i>
+                <i class="fa-brands fa-css3-alt fa-lg mx-2"></i>
+                <i class="fa-brands fa-js fa-lg mx-2"></i>
+                <i class="fa-solid fa-lock mx-2"></i>
+            </div>
+
+            <p class="mb-1 small">
+                Built with <strong>ASP.NET Core MVC</strong>, <strong>SQL Server</strong> and <strong>Stripe</strong>.<br />
+                UI powered by <strong>Bootstrap</strong>, unDraw, Toastr & FontAwesome. Hosting via <strong>Azure</strong>.
+            </p>
+            <p class="small text-muted mb-0">© @DateTime.Now.Year ParkingFlow. Created by <strong>Hieu & Shivam</strong>.</p>
         </div>
     </footer>
     <style>
@@ -110,6 +124,16 @@
                 background-color: #f72585;
                 color: #fff;
                 border-color: #f72585;
+            }
+
+        footer i {
+            color: #ffffffcc;
+            transition: transform 0.2s;
+        }
+
+            footer i:hover {
+                transform: scale(1.2);
+                color: #00d1b2;
             }
     </style>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

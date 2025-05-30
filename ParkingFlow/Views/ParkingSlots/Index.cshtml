@@ -11,133 +11,137 @@
         .OrderBy(g => g.Key);
 }
 
-<div class="container">
-    <div class="row pt-4 pb-3 align-items-center">
-        <div class="col-6">
-            <h2 class="text-white fw-bold">
-                <i class="fa-solid fa-square-parking text-info me-2"></i> Parking Slots
-            </h2>
-            <p class="text-light">Check slot availability and manage parking locations.</p>
-        </div>
-        <div class="col-6 text-end">
-            <div class="text-white-50 small mb-2">
-                <i class="fa-regular fa-clock me-1"></i>
-                <strong>Current Time:</strong> <span id="currentTime"></span>
-            </div>
-            @if (User.IsInRole("Admin"))
-            {
-                <a asp-controller="ParkingSlots" asp-action="Create" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-plus"></i> Create New Slot
-                </a>
-            }
-        </div>
-    </div>
-
-    <form asp-action="Index" method="get" class="row g-3 mb-4">
-        <div class="col-md-3">
-            <label class="text-white">Date</label>
-            <input type="date" name="bookingDate" class="form-control"
-                   value="@(Context.Request.Query["date"].ToString() != "" ? Context.Request.Query["date"].ToString() : DateTime.Now.ToString("yyyy-MM-dd"))" />
-        </div>
-        <div class="col-md-3">
-            <label class="text-white">Start Time</label>
-            <input type="time" name="startTime" class="form-control"
-                   value="@(Context.Request.Query["startTime"].ToString() != "" ? Context.Request.Query["startTime"].ToString() : DateTime.Now.ToString("HH:mm"))" />
-        </div>
-        <div class="col-md-3">
-            <label class="text-white">End Time</label>
-            <input type="time" name="endTime" class="form-control"
-                   value="@(Context.Request.Query["endTime"].ToString() != "" ? Context.Request.Query["endTime"].ToString() : DateTime.Now.AddMinutes(30).ToString("HH:mm"))" />
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-            <button type="submit" class="btn btn-info text-white w-100">
-                <i class="fa-solid fa-magnifying-glass"></i> Check Availability
-            </button>
-        </div>
-    </form>
-
-    @if (ViewBag.BookingDate != null && ViewBag.StartTime != null && ViewBag.EndTime != null)
-    {
-        foreach (var group in groupedSlots)
-        {
-            <div class="mb-5">
-                <h4 class="text-white mb-3">
-                    <i class="fa-solid fa-road me-2"></i> @group.Key
-                </h4>
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
-                    @foreach (var slot in group)
+<div class="d-flex flex-column min-vh-100">
+    <main class="flex-grow-1">
+        <div class="container">
+            <div class="row pt-4 pb-3 align-items-center">
+                <div class="col-6">
+                    <h2 class="text-white fw-bold">
+                        <i class="fa-solid fa-square-parking text-info me-2"></i> Parking Slots
+                    </h2>
+                    <p class="text-light">Check slot availability and manage parking locations.</p>
+                </div>
+                <div class="col-6 text-end">
+                    <div class="text-white-50 small mb-2">
+                        <i class="fa-regular fa-clock me-1"></i>
+                        <strong>Current Time:</strong> <span id="currentTime"></span>
+                    </div>
+                    @if (User.IsInRole("Admin"))
                     {
-                        var isAvailable = slot.IsVacant;
-                        var statusIcon = isAvailable ? "fa-circle-check text-success" : "fa-circle-xmark text-danger";
-                        var statusText = isAvailable ? "Available" : "Occupied";
-                        var cardBg = isAvailable ? "bg-success-subtle border-success" : "bg-danger-subtle border-danger";
-
-                        <div class="col">
-                            <div class="card h-100 border-2 @cardBg shadow-sm rounded-4 p-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="mb-0 text-dark">
-                                        <i class="fa-solid fa-square-parking text-primary me-1"></i>
-                                        @slot.SlotCode
-                                    </h5>
-                                    <span class="badge rounded-pill bg-white border text-dark">
-                                        <i class="fa-solid @statusIcon me-1"></i> @statusText
-                                    </span>
-                                </div>
-                                <p class="text-info mb-2 small">
-                                    <i class="fa-solid fa-location-dot me-1 text-info"></i>
-                                    @slot.Location
-                                </p>
-
-                                @if (!slot.IsVacant)
-                                {
-                                    var filteredBooking = slot.Bookings.FirstOrDefault(b =>
-                                    b.BookingDate.Date == ((DateTime)ViewBag.BookingDate).Date &&
-                                    (
-                                    ((TimeSpan)ViewBag.StartTime >= b.StartTime && (TimeSpan)ViewBag.StartTime < b.EndTime) ||
-                                    ((TimeSpan)ViewBag.EndTime > b.StartTime && (TimeSpan)ViewBag.EndTime <= b.EndTime) ||
-                                    ((TimeSpan)ViewBag.StartTime <= b.StartTime && (TimeSpan)ViewBag.EndTime >= b.EndTime)
-                                    ));
-
-                                    if (filteredBooking != null)
-                                    {
-                                        <p class="text-primary small mb-2">
-                                            <i class="fa-regular fa-clock me-1"></i>
-                                            Booked: @filteredBooking.StartTime:hh\\:mm - @filteredBooking.EndTime:hh\\:mm
-                                        </p>
-                                    }
-                                }
-
-                                <div class="d-flex flex-wrap gap-2">
-                                    @if (User.IsInRole("Admin"))
-                                    {
-                                        <a asp-controller="ParkingSlots" asp-action="Edit" asp-route-id="@slot.Id" class="btn btn-outline-warning btn-sm text-dark">
-                                            <i class="fa-solid fa-pen"></i> Edit
-                                        </a>
-                                        <a asp-controller="ParkingSlots" asp-action="Delete" asp-route-id="@slot.Id" class="btn btn-outline-danger btn-sm text-dark">
-                                            <i class="fa-solid fa-trash-can"></i> Delete
-                                        </a>
-                                    }
-
-                                    @if (User.Identity.IsAuthenticated && User.IsInRole("User") && slot.IsVacant)
-                                    {
-                                        <a asp-controller="Bookings" asp-action="Create" asp-route-slotId="@slot.Id" class="btn btn-success btn-sm">
-                                            <i class="fa-solid fa-calendar-plus"></i> Book
-                                        </a>
-                                    }
-                                </div>
-                            </div>
-                        </div>
+                        <a asp-controller="ParkingSlots" asp-action="Create" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-plus"></i> Create New Slot
+                        </a>
                     }
                 </div>
             </div>
-        }
-    }
-    else
-    {
-        <div class="alert alert-info mt-4">
-            Please select a date and time above to check parking availability.
+
+            <form asp-action="Index" method="get" class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="text-white">Date</label>
+                    <input type="date" name="bookingDate" class="form-control"
+                           value="@(Context.Request.Query["date"].ToString() != "" ? Context.Request.Query["date"].ToString() : DateTime.Now.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-md-3">
+                    <label class="text-white">Start Time</label>
+                    <input type="time" name="startTime" class="form-control"
+                           value="@(Context.Request.Query["startTime"].ToString() != "" ? Context.Request.Query["startTime"].ToString() : DateTime.Now.ToString("HH:mm"))" />
+                </div>
+                <div class="col-md-3">
+                    <label class="text-white">End Time</label>
+                    <input type="time" name="endTime" class="form-control"
+                           value="@(Context.Request.Query["endTime"].ToString() != "" ? Context.Request.Query["endTime"].ToString() : DateTime.Now.AddMinutes(30).ToString("HH:mm"))" />
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-info text-white w-100">
+                        <i class="fa-solid fa-magnifying-glass"></i> Check Availability
+                    </button>
+                </div>
+            </form>
+
+            @if (ViewBag.BookingDate != null && ViewBag.StartTime != null && ViewBag.EndTime != null)
+            {
+                foreach (var group in groupedSlots)
+                {
+                    <div class="mb-5">
+                        <h4 class="text-white mb-3">
+                            <i class="fa-solid fa-road me-2"></i> @group.Key
+                        </h4>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                            @foreach (var slot in group)
+                            {
+                                var isAvailable = slot.IsVacant;
+                                var statusIcon = isAvailable ? "fa-circle-check text-success" : "fa-circle-xmark text-danger";
+                                var statusText = isAvailable ? "Available" : "Occupied";
+                                var cardBg = isAvailable ? "bg-success-subtle border-success" : "bg-danger-subtle border-danger";
+
+                                <div class="col">
+                                    <div class="card h-100 border-2 @cardBg shadow-sm rounded-4 p-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5 class="mb-0 text-dark">
+                                                <i class="fa-solid fa-square-parking text-primary me-1"></i>
+                                                @slot.SlotCode
+                                            </h5>
+                                            <span class="badge rounded-pill bg-white border text-dark">
+                                                <i class="fa-solid @statusIcon me-1"></i> @statusText
+                                            </span>
+                                        </div>
+                                        <p class="text-info mb-2 small">
+                                            <i class="fa-solid fa-location-dot me-1 text-info"></i>
+                                            @slot.Location
+                                        </p>
+
+                                        @if (!slot.IsVacant)
+                                        {
+                                            var filteredBooking = slot.Bookings.FirstOrDefault(b =>
+                                            b.BookingDate.Date == ((DateTime)ViewBag.BookingDate).Date &&
+                                            (
+                                            ((TimeSpan)ViewBag.StartTime >= b.StartTime && (TimeSpan)ViewBag.StartTime < b.EndTime) ||
+                                            ((TimeSpan)ViewBag.EndTime > b.StartTime && (TimeSpan)ViewBag.EndTime <= b.EndTime) ||
+                                            ((TimeSpan)ViewBag.StartTime <= b.StartTime && (TimeSpan)ViewBag.EndTime >= b.EndTime)
+                                            ));
+
+                                            if (filteredBooking != null)
+                                            {
+                                                <p class="text-primary small mb-2">
+                                                    <i class="fa-regular fa-clock me-1"></i>
+                                                    Booked: @filteredBooking.StartTime:hh\\:mm - @filteredBooking.EndTime:hh\\:mm
+                                                </p>
+                                            }
+                                        }
+
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <a asp-controller="ParkingSlots" asp-action="Edit" asp-route-id="@slot.Id" class="btn btn-outline-warning btn-sm text-dark">
+                                                    <i class="fa-solid fa-pen"></i> Edit
+                                                </a>
+                                                <a asp-controller="ParkingSlots" asp-action="Delete" asp-route-id="@slot.Id" class="btn btn-outline-danger btn-sm text-dark">
+                                                    <i class="fa-solid fa-trash-can"></i> Delete
+                                                </a>
+                                            }
+
+                                            @if (User.Identity.IsAuthenticated && User.IsInRole("User") && slot.IsVacant)
+                                            {
+                                                <a asp-controller="Bookings" asp-action="Create" asp-route-slotId="@slot.Id" class="btn btn-success btn-sm">
+                                                    <i class="fa-solid fa-calendar-plus"></i> Book
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-info mt-4">
+                    Please select a date and time above to check parking availability.
+                </div>
+            }
         </div>
-    }
+    </main>
 </div>
 
 @section Scripts {
