@@ -17,32 +17,39 @@ namespace ParkingFlow.Controllers
         // GET: Filter parking slots based on booking date and time
         public IActionResult Index(DateTime? bookingDate, TimeSpan? startTime, TimeSpan? endTime)
         {
-            ViewBag.CurrentDateTime = DateTime.Now;
+            var nzTimeZone = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
+            var nzNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, nzTimeZone);
+
+            ViewBag.CurrentDateTime = nzNow;
+
+            bookingDate ??= nzNow.Date;
+            startTime ??= nzNow.TimeOfDay;
+            endTime ??= nzNow.AddMinutes(30).TimeOfDay;
+
             ViewBag.BookingDate = bookingDate;
             ViewBag.StartTime = startTime;
             ViewBag.EndTime = endTime;
 
-            var parkingSlots = _db.ParkingSlots
-                .Include(p => p.Bookings)
-                .ToList();
+            ViewBag.NZBookingDate = bookingDate.Value.ToString("yyyy-MM-dd");
+            ViewBag.NZStartTime = startTime.Value.ToString(@"hh\:mm");
+            ViewBag.NZEndTime = endTime.Value.ToString(@"hh\:mm");
+
+            var parkingSlots = _db.ParkingSlots.Include(p => p.Bookings).ToList();
 
             foreach (var slot in parkingSlots)
             {
                 slot.IsVacant = true;
 
-                if (bookingDate.HasValue && startTime.HasValue && endTime.HasValue)
-                {
-                    var conflict = slot.Bookings.Any(b =>
-                        b.BookingDate.Date == bookingDate.Value.Date &&
-                        (
-                            (startTime >= b.StartTime && startTime < b.EndTime) ||
-                            (endTime > b.StartTime && endTime <= b.EndTime) ||
-                            (startTime <= b.StartTime && endTime >= b.EndTime)
-                        ));
+                var conflict = slot.Bookings.Any(b =>
+                    b.BookingDate.Date == bookingDate.Value.Date &&
+                    (
+                        (startTime >= b.StartTime && startTime < b.EndTime) ||
+                        (endTime > b.StartTime && endTime <= b.EndTime) ||
+                        (startTime <= b.StartTime && endTime >= b.EndTime)
+                    ));
 
-                    if (conflict)
-                        slot.IsVacant = false;
-                }
+                if (conflict)
+                    slot.IsVacant = false;
             }
 
             return View(parkingSlots);

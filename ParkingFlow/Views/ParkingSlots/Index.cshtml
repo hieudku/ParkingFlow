@@ -24,7 +24,7 @@
                 <div class="col-6 text-end">
                     <div class="text-white-50 small mb-2">
                         <i class="fa-regular fa-clock me-1"></i>
-                        <strong>Current Time:</strong> <span id="currentTime"></span>
+                        <strong>Current Time:<span>@(((DateTime)ViewBag.CurrentDateTime).ToString("dd/MM/yyyy, hh:mm:ss tt"))</span></strong>
                     </div>
                     @if (User.IsInRole("Admin"))
                     {
@@ -39,18 +39,19 @@
                 <div class="col-md-3">
                     <label class="text-white">Date</label>
                     <input type="date" name="bookingDate" class="form-control"
-                           value="@(Context.Request.Query["date"].ToString() != "" ? Context.Request.Query["date"].ToString() : DateTime.Now.ToString("yyyy-MM-dd"))" />
+                           value="@ViewBag.NZBookingDate" />
+
                 </div>
                 <div class="col-md-3">
                     <label class="text-white">Start Time</label>
-                    <input type="time" name="startTime" class="form-control"
-                           value="@(Context.Request.Query["startTime"].ToString() != "" ? Context.Request.Query["startTime"].ToString() : DateTime.Now.ToString("HH:mm"))" />
+                    <input type="time" name="startTime" class="form-control" value="@ViewBag.NZStartTime" />
                 </div>
+
                 <div class="col-md-3">
                     <label class="text-white">End Time</label>
-                    <input type="time" name="endTime" class="form-control"
-                           value="@(Context.Request.Query["endTime"].ToString() != "" ? Context.Request.Query["endTime"].ToString() : DateTime.Now.AddMinutes(30).ToString("HH:mm"))" />
+                    <input type="time" name="endTime" class="form-control" value="@ViewBag.NZEndTime" />
                 </div>
+
                 <div class="col-md-3 d-flex align-items-end">
                     <button type="submit" class="btn btn-info text-white w-100">
                         <i class="fa-solid fa-magnifying-glass"></i> Check Availability
@@ -143,14 +144,3 @@
         </div>
     </main>
 </div>
-
-@section Scripts {
-    <script>
-        function updateClock() {
-            const now = new Date();
-            document.getElementById("currentTime").innerText = now.toLocaleString();
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-    </script>
-}
