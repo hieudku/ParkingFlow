@@ -58,7 +58,10 @@
                     </button>
                 </div>
             </form>
-
+            <style>
+                .card {
+                    height: 220px
+            </style>
             @if (ViewBag.BookingDate != null && ViewBag.StartTime != null && ViewBag.EndTime != null)
             {
                 foreach (var group in groupedSlots)
@@ -76,7 +79,7 @@
                                 var cardBg = isAvailable ? "bg-success-subtle border-success" : "bg-danger-subtle border-danger";
 
                                 <div class="col">
-                                    <div class="card h-100 border-2 @cardBg shadow-sm rounded-4 p-3">
+                                    <div class="card vh-75 border-2 @cardBg shadow-sm rounded-4 p-3">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <h5 class="mb-0 text-dark">
                                                 <i class="fa-solid fa-square-parking text-primary me-1"></i>

@@ -8,8 +8,6 @@ html, body {
     padding: 0;
     min-height: 100vh;
     overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
 }
 html {
   font-size: 14px;
