@@ -4,31 +4,44 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 85vh;">
+    <div class="card shadow-lg p-4 border-0" style="width: 100%; max-width: 420px; background-color: #1f1f1f 0.3; color: #fff; border-radius: 16px;">
+        <div class="text-center mb-4">
+            <i class="fas fa-user-plus fa-3x text-primary mb-2"></i>
+            <h3 class="fw-bold">Create Account</h3>
+            <p class="text-secondary small">Join ParkingFlow to start finding your parkings</p>
+        </div>
 
-<div class="row">
-    <div class="col-md-4">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3" role="alert"></div>
+
             <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <input asp-for="Input.Email" class="form-control bg-dark border-secondary text-white" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="Input.Email" class="text-white-50"><i class="fa-solid fa-envelope me-2"></i>Email</label>
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
             </div>
+
             <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <input asp-for="Input.Password" class="form-control bg-dark border-secondary text-white" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label asp-for="Input.Password" class="text-white-50"><i class="fa-solid fa-lock me-2"></i>Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+
+            <div class="form-floating mb-4">
+                <input asp-for="Input.ConfirmPassword" class="form-control bg-dark border-secondary text-white" autocomplete="new-password" aria-required="true" placeholder="confirm password" />
+                <label asp-for="Input.ConfirmPassword" class="text-white-50"><i class="fa-solid fa-lock me-2"></i>Confirm Password</label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+
+            <button id="registerSubmit" type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold">
+                <i class="fa-solid fa-user-plus me-2"></i> Register
+            </button>
         </form>
+
+        <div class="mt-3 text-center">
+            <span class="text-white-50">Already have an account?</span>
+            <a asp-page="/Account/Login" class="text-info text-decoration-none ms-1 fw-semibold">Sign in</a>
+        </div>
     </div>
 </div>
 
