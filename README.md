@@ -10,9 +10,9 @@ ParkingFlow is a web parking management application built using ASP.NET Core MVC
 
 <ul>
   <li><strong>Backend:</strong> ASP.NET Core MVC with Entity Framework Core</li>
-  <li><strong>Frontend:</strong> Razor views using Bootstrap and custom CSS</li>
-  <li><strong>Authentication:</strong> ASP.NET Identity with role-based authorization</li>
-  <li><strong>Database:</strong> SQL Server</li>
+  <li><strong>Frontend:</strong> Razor views, Bootstrap</li>
+  <li><strong>Authentication:</strong> ASP.NET Identity</li>
+  <li><strong>Database:</strong> SQL Server (Development), Azure SQL Server (Production)</li>
   <li><strong>Payment:</strong> Stripe integration for booking checkout</li>
   <li><strong>Hosting:</strong> Azure App Service</li>
 </ul>
@@ -85,8 +85,8 @@ Visit <code>https://localhost:5001</code> in your browser(localhost might differ
 <h2>User Roles</h2>
 
 <ul>
-  <li><strong>Admin</strong> – Can add/edit/delete parking slots and view all bookings</li>
-  <li><strong>User</strong> – Can browse available parking, make bookings, and manage their own reservations</li>
+  <li><strong>Admin</strong>: Can add/edit/delete parking slots and view all bookings</li>
+  <li><strong>User</strong>: Can browse available parking, make bookings, and manage their own reservations</li>
 </ul>
 
 <p>
@@ -98,7 +98,7 @@ Admin users must be seeded or manually assigned in the database.
 <h2>Environment Variables (Optional)</h2>
 
 <p>
-You can optionally store sensitive config values outside <code>appsettings.json</code> for security:
+You can optionally store sensitive config values outside <code>appsettings.json</code> for security (in secrets.json):
 </p>
 
 <ul>
@@ -119,11 +119,6 @@ You can optionally store sensitive config values outside <code>appsettings.json<
 
 <hr/>
 
-<h2>License</h2>
-
-<p>
-This project is released under the MIT License. See <code>LICENSE</code> file for more details.
-</p>
 
 <hr/>
 
